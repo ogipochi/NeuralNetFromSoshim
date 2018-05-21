@@ -1,0 +1,33 @@
+#cloud-config
+
+coreos:
+  units:
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: docker.service
+      command: start
+
+    # タイムゾーンを JST に設定
+    - name: timezone.service
+      command: start
+      content: |
+        [Unit]
+        Description=timezone
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/ln -sf ../usr/share/zoneinfo/Japan /etc/localtime
+
+  update:
+    - reboot-strategy: best-effort
+
+ssh_authorized_keys:
+    # 管理ユーザー core の公開鍵。coreos_key.pub の文字列を使用
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5Gg39UmGhs6vlmxHY8dj2KJXVepXlU9ejNvMX6kpCj2ARxokiyJVFPiu2z9FkmpYwx2U706rto6dK2rQYfwvO63fWy3LEQUsgUS6D+mg4lgVUwsA2cICr28877+ZoTt+69jE/feWPinoPIahChqnQ8DBE8bLjUxor3SFXuH+Hjif3Xd8diRyTky9ubt3t/Taood98mqK7Do3hYtX3HdPJLNrcgRpH7Cg8mH1hPWe8SaTJXIgQLI4+VvtHL+WDyh9yPsyjIHkPET1dJ0pEygXz+puQbV7aTBdIygZJ62kdVBlBcSbEKTMxMSPdg6pAy7keivHwW9O5kjUgGdQA1ykN ogihara@coly.info
+
+
+hostname: coly
+
+manage_etc_hosts: colycore  # ローカルの名前解決用
